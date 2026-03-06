@@ -24,11 +24,11 @@ export default function ProductComparison({ products, onRemove, onClear }: Produ
   const getStockStatus = (product: Product) => {
     if (product.variants && product.variants.length > 0) {
       const totalStock = product.variants.reduce((sum, v) => sum + v.stock, 0);
-      if (totalStock > 10) return { status: 'in_stock', text: t('product.in_stock') || 'متوفر', color: 'text-green-600' };
-      if (totalStock > 0) return { status: 'low_stock', text: t('product.low_stock') || 'كمية قليلة', color: 'text-yellow-600' };
-      return { status: 'out_of_stock', text: t('product.out_of_stock') || 'نفذت الكمية', color: 'text-red-600' };
+      if (totalStock > 10) return { status: 'in_stock', text: t('product.in_stock') || 'In Stock', color: 'text-green-600' };
+      if (totalStock > 0) return { status: 'low_stock', text: t('product.low_stock') || 'Low Stock', color: 'text-yellow-600' };
+      return { status: 'out_of_stock', text: t('product.out_of_stock') || 'Out of Stock', color: 'text-red-600' };
     }
-    return { status: 'in_stock', text: t('product.in_stock') || 'متوفر', color: 'text-green-600' };
+    return { status: 'in_stock', text: t('product.in_stock') || 'In Stock', color: 'text-green-600' };
   };
 
   return (
@@ -36,20 +36,20 @@ export default function ProductComparison({ products, onRemove, onClear }: Produ
       <div className="page-container py-4">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-bold text-gray-900">
-            {t('product.comparing') || 'مقارنة المنتجات'} ({products.length})
+            {t('product.comparing') || 'Comparing Products'} ({products.length})
           </h3>
           <div className="flex gap-2">
             <Link
               href={`/compare?ids=${products.map(p => p.id).join(',')}`}
               className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 active:scale-95 transition-all touch-manipulation text-sm"
             >
-              {t('product.view_comparison') || 'عرض المقارنة'}
+              {t('product.view_comparison') || 'View Comparison'}
             </Link>
             <button
               onClick={onClear}
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 active:scale-95 transition-all touch-manipulation text-sm"
             >
-              {t('product.clear_all') || 'مسح الكل'}
+              {t('product.clear_all') || 'Clear All'}
             </button>
           </div>
         </div>
@@ -64,7 +64,7 @@ export default function ProductComparison({ products, onRemove, onClear }: Produ
                 <button
                   onClick={() => onRemove(product.id)}
                   className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 active:scale-95 transition-all touch-manipulation"
-                  aria-label={t('product.remove') || 'إزالة'}
+                  aria-label={t('product.remove') || 'Remove'}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -75,7 +75,7 @@ export default function ProductComparison({ products, onRemove, onClear }: Produ
                     {product.images?.[0] ? (
                       <Image
                         src={product.images[0]}
-                        alt={getProductName(product, languageCode) || 'منتج'}
+                        alt={getProductName(product, languageCode) || 'Product'}
                         fill
                         className="object-cover"
                         sizes="160px"
@@ -106,4 +106,3 @@ export default function ProductComparison({ products, onRemove, onClear }: Produ
     </div>
   );
 }
-

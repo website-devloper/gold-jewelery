@@ -57,7 +57,7 @@ export default function MobileStickyCart() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs text-gray-500 truncate">
-                {cartItemCount} {cartItemCount === 1 ? (t('cart.item') || 'عنصر') : (t('cart.items') || 'عناصر')}
+                {cartItemCount} {cartItemCount === 1 ? (t('cart.item') || 'item') : (t('cart.items') || 'items')}
               </p>
               <p className="text-sm font-bold text-gray-900 truncate">
                 {formatPrice(cartTotal)}
@@ -69,11 +69,10 @@ export default function MobileStickyCart() {
             className="bg-gray-900 text-white px-6 py-3 rounded-xl font-bold text-sm uppercase tracking-wide flex-shrink-0 active:bg-gray-800 touch-manipulation"
             onClick={() => setShowCartDialog(false)}
           >
-            {t('cart.view_cart') || 'عرض السلة'}
+            {t('cart.view_cart') || 'View Cart'}
           </Link>
         </div>
       </div>
     </div>
   );
 }
-

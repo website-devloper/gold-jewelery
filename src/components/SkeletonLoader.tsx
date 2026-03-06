@@ -105,4 +105,3 @@ export default function SkeletonLoader({ type = 'product', count = 1 }: Skeleton
 
   return null;
 }
-

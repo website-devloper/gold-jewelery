@@ -14,9 +14,9 @@ const config: Config = {
         foreground: "var(--foreground)",
       },
       fontFamily: {
-        sans: ["var(--font-bader-goldstar)", "system-ui", "sans-serif"],
-        heading: ["var(--font-bader-goldstar)", "system-ui", "sans-serif"],
-        mono: ["var(--font-bader-goldstar)", "monospace"],
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        heading: ["var(--font-poppins)", "system-ui", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "monospace"],
       },
     },
   },

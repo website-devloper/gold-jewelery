@@ -1,0 +1,37 @@
+  return (
+    <div className="min-h-screen pb-20">
+      <section className={`relative w-full ${isMobile ? 'h-[500px]' : 'h-[600px]'} overflow-hidden`}>
+        {banners.length > 0 && (
+          <>
+            <div className="relative h-full">
+              {banners.map((banner, index) => (
+                <div key={banner.id} className={`absolute inset-0 transition-opacity duration-500 ${index === currentBannerIndex ? 'opacity-100' : 'opacity-0'}`}>
+                  <Image src={banner.imageUrl} alt={banner.title || ""} fill className="object-cover" unoptimized priority={index === 0} />
+                </div>
+              ))}
+            </div>
+            <div className="absolute inset-0 bg-black/30 z-10 flex items-center justify-center text-center">
+               <div className="max-w-3xl px-4">
+                  <h1 className="text-4xl md:text-6xl font-heading font-bold text-white mb-6 uppercase tracking-wider">{banners[currentBannerIndex].title}</h1>
+                  <p className="text-lg text-white/90 mb-8">{banners[currentBannerIndex].subtitle}</p>
+                  <Link href="/shop" className="bg-white text-black px-10 py-4 rounded-full font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors inline-block">{t('home.shop_now')}</Link>
+               </div>
+            </div>
+          </>
+        )}
+      </section>
+
+      <section className="page-container py-16 md:py-24">
+        <h2 className="text-3xl md:text-4xl font-heading font-bold mb-12 text-center">{t('home.featured')}</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+          {featuredProducts.map(p => <ProductCard key={p.id} product={p} />)}
+        </div>
+      </section>
+
+      <QuickViewModal product={quickViewProduct} isOpen={!!quickViewProduct} onClose={() => setQuickViewProduct(null)} />
+      <MobileStickyCart />
+      <BackToTop />
+      <ProductComparison products={comparisonProducts} onRemove={handleRemoveFromComparison} onClear={handleClearComparison} />
+    </div>
+  );
+}

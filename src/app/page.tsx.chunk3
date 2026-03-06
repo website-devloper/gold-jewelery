@@ -1,0 +1,76 @@
+  useEffect(() => {
+    if (!settings?.features?.productReviews) return;
+    const allProducts: Product[] = [...featuredProducts, ...popularProducts, ...latestProducts, ...flashSaleProducts];
+    const uniqueProducts = Array.from(new Map(allProducts.map((p) => [p.id, p])).values());
+    if (uniqueProducts.length === 0) return;
+
+    const loadReviewStats = async () => {
+      try {
+        const entries = await Promise.all(
+          uniqueProducts.map(async (product) => {
+            try {
+              const reviews: Review[] = await getReviewsByProductId(product.id);
+              if (!reviews || reviews.length === 0) return [product.id, { averageRating: 0, reviewCount: 0 }] as const;
+              const totalRating = reviews.reduce((sum, r) => sum + (r.rating || 0), 0);
+              return [product.id, { averageRating: totalRating / reviews.length, reviewCount: reviews.length }] as const;
+            } catch {
+              return [product.id, { averageRating: 0, reviewCount: 0 }] as const;
+            }
+          })
+        );
+        const statsMap: Record<string, { averageRating: number; reviewCount: number }> = {};
+        for (const [productId, stats] of entries) statsMap[productId] = stats;
+        setReviewStats(statsMap);
+      } catch {}
+    };
+    loadReviewStats();
+  }, [featuredProducts, popularProducts, latestProducts, flashSaleProducts, settings?.features?.productReviews]);
+
+  useEffect(() => {
+    if (!settings?.features?.productReviews) return;
+    getAllReviews(10, 4).then(setTestimonials).catch(() => {});
+  }, [settings?.features?.productReviews]);
+
+  useEffect(() => {
+    if (testimonials.length <= 1) return;
+    const interval = setInterval(() => setCurrentTestimonialIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1)), 5000);
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
+
+  useEffect(() => {
+    if (!settings?.features?.blog) return;
+    getAllPosts(true).then(posts => setFeaturedBlogPosts(posts.slice(0, 3))).catch(() => {});
+  }, [settings?.features?.blog]);
+
+  useEffect(() => {
+    const userId = user?.uid || (settings?.demoMode && demoUser ? 'demo-user' : null);
+    if (!userId) return;
+    getRecentlyViewed(userId, 8).then(setRecentlyViewedProducts).catch(() => {});
+  }, [user, demoUser, settings?.demoMode]);
+
+  useEffect(() => {
+    localStorage.getItem('productComparison') && getAllProducts().then(all => {
+      const ids = JSON.parse(localStorage.getItem('productComparison')!);
+      setComparisonProducts(all.filter(p => ids.includes(p.id)));
+    }).catch(() => {});
+  }, []);
+
+  const handleAddToComparison = (product: Product) => {
+    if (comparisonProducts.length >= 4 || comparisonProducts.some(p => p.id === product.id)) return;
+    const updated = [...comparisonProducts, product];
+    setComparisonProducts(updated);
+    localStorage.setItem('productComparison', JSON.stringify(updated.map(p => p.id)));
+  };
+
+  const handleRemoveFromComparison = (productId: string) => {
+    const updated = comparisonProducts.filter(p => p.id !== productId);
+    setComparisonProducts(updated);
+    localStorage.setItem('productComparison', JSON.stringify(updated.map(p => p.id)));
+  };
+
+  const handleClearComparison = () => {
+    setComparisonProducts([]);
+    localStorage.removeItem('productComparison');
+  };
+
+  /* CHUNK_MARKER_EXTRA_LOGIC */

@@ -31,7 +31,7 @@ export default function BackToTop() {
     <button
       onClick={scrollToTop}
       className="fixed bottom-24 md:bottom-8 right-4 md:right-8 z-50 bg-gray-900 text-white p-3 md:p-4 rounded-full shadow-2xl hover:bg-gray-800 active:scale-95 transition-all touch-manipulation group"
-      aria-label="العودة للأعلى"
+      aria-label="Back to top"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -46,4 +46,3 @@ export default function BackToTop() {
     </button>
   );
 }
-

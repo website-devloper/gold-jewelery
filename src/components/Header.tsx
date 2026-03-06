@@ -25,21 +25,18 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const router = useRouter();
   const auth = getAuth(app);
 
   const cartItemCount = mounted ? cart.reduce((total, item) => total + item.quantity, 0) : 0;
-  const cartTotal = mounted ? cart.reduce((total, item) => total + item.price * item.quantity, 0) : 0;
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 0);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -49,23 +46,15 @@ const Header = () => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/shop?search=${encodeURIComponent(searchQuery)}`);
-      setIsSearchOpen(false);
-      setSearchQuery('');
     }
   };
 
   const handleLogout = async () => {
     try {
-      if (user) {
-        await signOut(auth);
-      }
-      if (settings?.demoMode && demoUser) {
-        localStorage.removeItem('pardah_demo_user');
-      }
+      if (user) await signOut(auth);
+      if (settings?.demoMode && demoUser) localStorage.removeItem('pardah_demo_user');
       router.push('/');
-    } catch {
-      // Failed to logout
-    }
+    } catch { }
   };
 
   useEffect(() => {
@@ -79,373 +68,135 @@ const Header = () => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
-  const navLinks = [
-    { name: t('nav.home'), key: 'home', path: '/', show: true },
-    { name: t('nav.shop'), key: 'shop', path: '/shop', show: true },
-    { name: t('nav.categories'), key: 'categories', path: '/categories', show: true },
-    { name: t('common.brands'), key: 'brands', path: '/brands', show: true },
-    { name: t('nav.about'), key: 'about', path: '/about', show: settings?.pages?.aboutUs },
-    { name: t('nav.contact'), key: 'contact', path: '/contact', show: settings?.pages?.contactUs },
-  ].filter(link => link.show !== false);
+  const headerBg = settings?.theme?.colors?.headerBackground || '#ffffff';
+  const headerText = settings?.theme?.colors?.headerText || '#000000';
 
   return (
     <>
       <TopBar />
-
       <header
-        className={`sticky top-0 z-50 transition-all duration-300 font-heading ${isScrolled ? 'shadow-md' : ''}`}
         style={{
-          backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.97)' : '#FFFFFF',
-          borderBottom: '1px solid #EEEEEE',
-          backdropFilter: isScrolled ? 'blur(12px)' : 'none',
+          backgroundColor: isScrolled ? `${headerBg}CC` : headerBg,
+          color: headerText,
         }}
+        className={`sticky top-0 z-50 transition-all duration-300 border-b border-transparent ${isScrolled ? 'backdrop-blur-md shadow-sm border-gray-100' : ''
+          }`}
       >
         <div className="page-container">
-          <div
-            className="flex items-center justify-between"
-            style={{ height: isScrolled ? '60px' : '72px', transition: 'height 0.3s ease' }}
-          >
+          <div className="flex items-center justify-between h-16 md:h-20">
+            <button
+              className="md:hidden p-2 text-gray-600 hover:text-black focus:outline-none"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label={isMenuOpen ? (t('header.close_menu') || 'Close menu') : (t('header.open_menu') || 'Open menu')}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+            </button>
 
-            {/* Right Side — Hamburger (mobile only) + Desktop Nav + Search */}
-            <div className="flex items-center gap-1 md:gap-3">
-              {/* Mobile Hamburger Menu */}
-              <button
-                className="md:hidden flex items-center gap-1.5 px-2 py-1.5 rounded-lg transition-colors hover:bg-gray-50"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-                style={{ color: '#333333' }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
-              </button>
-
-              {/* Desktop Navigation Links */}
-              <nav className={`hidden md:flex items-center ${isRTL ? 'space-x-reverse' : ''} gap-0.5`}>
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.key}
-                    href={link.path}
-                    className="relative px-3 lg:px-4 py-2 text-[22px] lg:text-[26px] font-bold transition-colors duration-200 rounded-md group"
-                    style={{ color: '#111111' }}
-                  >
-                    <span className="group-hover:text-[#CFB257] transition-colors duration-200">
-                      {link.name}
-                    </span>
-                    {/* Subtle underline on hover */}
-                    <span
-                      className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-0 h-[1.5px] rounded-full transition-all duration-300 group-hover:w-3/4"
-                      style={{ backgroundColor: '#CFB257' }}
-                    />
-                  </Link>
-                ))}
-              </nav>
-
-              {/* Search Icon */}
-              <button
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="flex items-center justify-center w-9 h-9 rounded-full transition-colors hover:bg-gray-50"
-                style={{ color: '#333333' }}
-                aria-label="Search"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Center — Logo */}
-            <div className="absolute left-1/2 -translate-x-1/2">
-              <Link href="/" className="flex items-center gap-2 group">
-                {mounted && (settings.theme.logoUrl || '/logo.png') ? (
+            <div className="flex-shrink-0">
+              <Link href="/" className="flex items-center hover:scale-105 transition-transform duration-300">
+                {mounted && settings.theme.logoUrl ? (
                   <Image
-                    src={settings.theme.logoUrl || '/logo.png'}
-                    alt={settings.company.name || "ALSAAB JEWELRY"}
-                    width={200}
-                    height={70}
-                    className="h-12 md:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                    priority
+                    src={settings.theme.logoUrl}
+                    alt={settings.company.name || ""}
+                    width={120}
+                    height={48}
+                    className="h-12 w-auto object-contain"
                     unoptimized
                   />
                 ) : (
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="font-heading font-bold tracking-wider transition-all duration-300"
-                      style={{
-                        color: '#333333',
-                        fontSize: isScrolled ? '1.4rem' : '1.75rem',
-                        lineHeight: 1.1,
-                        letterSpacing: '0.12em',
-                      }}
-                    >
-                      {settings.company.name || "PARDAH"}
-                    </span>
-                  </div>
+                  <span style={{ color: headerText }} className="text-4xl font-heading font-bold tracking-tight">
+                    {settings.company.name || ""}
+                  </span>
                 )}
               </Link>
             </div>
 
-            {/* Left Side — Language + User + Cart */}
-            <div className="flex items-center gap-1 md:gap-2">
-              {/* Language */}
-              <div className="hidden md:block">
-                <LanguageSwitcher />
+            <nav className={`hidden md:flex ${isRTL ? 'space-x-reverse space-x-8' : 'space-x-8'} items-center`}>
+              {[
+                { name: t('nav.home'), key: 'home', path: '/', show: true },
+                { name: t('nav.shop'), key: 'shop', path: '/shop', show: true },
+                { name: t('nav.categories'), key: 'categories', path: '/categories', show: true },
+                { name: t('common.brands'), key: 'brands', path: '/brands', show: true },
+                { name: t('nav.about'), key: 'about', path: '/about', show: settings?.pages?.aboutUs },
+                { name: t('nav.contact'), key: 'contact', path: '/contact', show: settings?.pages?.contactUs },
+              ].filter(link => link.show !== false).map((link) => (
+                <Link key={link.key} href={link.path} style={{ color: headerText }} className="text-sm font-medium hover:opacity-70 transition-colors relative group">
+                  {link.name}
+                  <span style={{ backgroundColor: headerText }} className={`absolute -bottom-1 ${isRTL ? 'right-0' : 'left-0'} w-0 h-0.5 transition-all group-hover:w-full`}></span>
+                </Link>
+              ))}
+            </nav>
+
+            <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-6' : 'space-x-6'}`}>
+              {settings?.site?.enableLanguageSwitcher && <div className="hidden md:block"><LanguageSwitcher /></div>}
+              <div className="hidden md:block relative group">
+                <form onSubmit={handleSearch} className="relative">
+                  <input
+                    type="text"
+                    placeholder={t('common.search')}
+                    className={`w-16 group-hover:w-48 focus:w-48 transition-all duration-300 border-b border-transparent focus:border-black bg-transparent focus:outline-none text-sm py-1 ${isRTL ? 'pl-8' : 'pr-8'} placeholder-transparent focus:placeholder-gray-400`}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <button type="submit" style={{ color: headerText }} className={`absolute ${isRTL ? 'left-0' : 'right-0'} top-1/2 -translate-y-1/2 hover:opacity-70 transition-opacity w-8 h-8 flex items-center justify-center`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                  </button>
+                </form>
               </div>
 
-              {/* User Account */}
               {settings?.site?.enableUserAccountCreation !== false && (
                 <div className="relative hidden md:block">
-                  <button
-                    id="user-menu-button"
-                    onClick={() => {
-                      const isLoggedIn = user || (settings?.demoMode && demoUser);
-                      if (isLoggedIn) {
-                        setIsUserMenuOpen(!isUserMenuOpen);
-                      } else {
-                        router.push('/login');
-                      }
-                    }}
-                    className="flex items-center justify-center w-9 h-9 rounded-full transition-colors hover:bg-gray-50"
-                    style={{ color: '#333333' }}
-                    aria-label="Account"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                  <button id="user-menu-button" onClick={() => (user || (settings?.demoMode && demoUser)) ? setIsUserMenuOpen(!isUserMenuOpen) : router.push('/login')} style={{ color: headerText }} className="hover:opacity-70 transition-opacity focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 hover:scale-110 transition-transform">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                     </svg>
                   </button>
-
-                  {/* User Dropdown */}
                   {isUserMenuOpen && (user || (settings?.demoMode && demoUser)) && (
-                    <div
-                      id="user-menu-dropdown"
-                      className="absolute right-0 mt-2 w-56 rounded-xl overflow-hidden shadow-xl z-50 animate-fadeIn"
-                      style={{ backgroundColor: '#FFFFFF', border: '1px solid #EEEEEE' }}
-                    >
-                      {/* User Info Header */}
-                      <div className="px-5 py-3" style={{ background: 'linear-gradient(135deg, #F9F6EF, #F3EDE0)' }}>
-                        <p className="text-sm font-heading font-semibold" style={{ color: '#333' }}>
-                          {user?.displayName || demoUser?.displayName || 'User'}
-                        </p>
-                        <p className="text-xs mt-0.5" style={{ color: '#8B7355' }}>
-                          {user?.email || demoUser?.phoneNumber || ''}
-                        </p>
+                    <div id="user-menu-dropdown" className={`absolute ${isRTL ? 'left-0 origin-top-left' : 'right-0 origin-top-right'} mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 ring-1 ring-black ring-opacity-5 transform transition-all duration-200 ease-out`}>
+                      <div className="px-4 py-2 border-b border-gray-100">
+                        <p className="text-sm font-medium text-gray-900 truncate">{user?.displayName || demoUser?.displayName || 'User'}</p>
+                        <p className="text-xs text-gray-500 truncate">{user?.email || demoUser?.phoneNumber || ''}</p>
                       </div>
-                      <div className="py-1">
-                        <Link
-                          href="/account/profile"
-                          className="flex items-center gap-3 px-5 py-2.5 text-sm transition-colors hover:bg-gray-50"
-                          style={{ color: '#333' }}
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 opacity-50">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                          </svg>
-                          {t('common.profile')}
-                        </Link>
-                        <Link
-                          href="/account/orders"
-                          className="flex items-center gap-3 px-5 py-2.5 text-sm transition-colors hover:bg-gray-50"
-                          style={{ color: '#333' }}
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 opacity-50">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                          </svg>
-                          {t('common.orders')}
-                        </Link>
-                        {settings?.features?.wishlist && (
-                          <Link
-                            href="/wishlist"
-                            className="flex items-center gap-3 px-5 py-2.5 text-sm transition-colors hover:bg-gray-50"
-                            style={{ color: '#333' }}
-                            onClick={() => setIsUserMenuOpen(false)}
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 opacity-50">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                            </svg>
-                            {t('common.wishlist')}
-                          </Link>
-                        )}
-                      </div>
-                      <div style={{ borderTop: '1px solid #eee' }}>
-                        <button
-                          onClick={() => { handleLogout(); setIsUserMenuOpen(false); }}
-                          className="flex items-center gap-3 w-full px-5 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 opacity-50">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-                          </svg>
-                          {t('common.logout')}
-                        </button>
-                      </div>
+                      <Link href="/account/profile" className={`block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ${isRTL ? 'text-right' : 'text-left'}`} onClick={() => setIsUserMenuOpen(false)}>{t('common.profile')}</Link>
+                      <Link href="/account/orders" className={`block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ${isRTL ? 'text-right' : 'text-left'}`} onClick={() => setIsUserMenuOpen(false)}>{t('common.orders')}</Link>
+                      <button onClick={() => { handleLogout(); setIsUserMenuOpen(false); }} className={`block w-full ${isRTL ? 'text-right' : 'text-left'} px-4 py-2 text-sm text-red-600 hover:bg-gray-50`}>{t('common.logout')}</button>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Cart */}
-              <Link
-                href="/cart"
-                className="relative flex items-center gap-1.5 px-2 py-1.5 rounded-lg transition-colors hover:bg-gray-50 group"
-                style={{ color: '#333333' }}
-                aria-label="Cart"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121 0 2.09-.773 2.34-1.87l1.81-7.964H6.106M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+              <Link href="/cart" style={{ color: headerText }} className="relative hover:opacity-70 transition-opacity">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 5c.07.277-.15.456-.52.456H4.15c-.37 0-.59-.179-.52-.456l1.263-5a.75.75 0 0 1 .726-.569h12.862a.75.75 0 0 1 .726.569Z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7Z" />
                 </svg>
-                {cartItemCount > 0 && (
-                  <span
-                    className="absolute -top-0.5 -right-0.5 text-white text-[9px] font-bold rounded-full h-[16px] w-[16px] flex items-center justify-center"
-                    style={{ backgroundColor: '#B69349' }}
-                  >
-                    {cartItemCount}
-                  </span>
-                )}
-                <span className="hidden md:inline text-xs font-medium" style={{ color: '#333' }}>
-                  {cartTotal > 0 ? `${cartTotal.toFixed(0)} ${t('common.sar') || 'ر.س'}` : `0 ${t('common.sar') || 'ر.س'}`}
-                </span>
+                {cartItemCount > 0 && <span className="absolute -top-1.5 -right-1.5 bg-black text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center border border-white">{cartItemCount}</span>}
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Search Overlay */}
-        {isSearchOpen && (
-          <div
-            className="absolute top-full left-0 right-0 animate-fadeIn z-50 shadow-lg"
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.98)',
-              backdropFilter: 'blur(20px)',
-              borderBottom: '1px solid #eee',
-            }}
-          >
-            <div className="page-container py-5">
-              <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto">
-                <input
-                  type="text"
-                  placeholder={t('common.search_placeholder') || 'البحث عن الذهب والمجوهرات والخواتم...'}
-                  className="w-full px-5 py-3.5 text-base rounded-xl focus:outline-none transition-all duration-300"
-                  style={{
-                    backgroundColor: '#F9F9F5',
-                    border: '1px solid #E5E5E0',
-                    color: '#333',
-                  }}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  autoFocus
-                />
-                <button
-                  type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 px-5 py-2 rounded-lg text-sm font-semibold text-white transition-all duration-300 hover:shadow-md"
-                  style={{ backgroundColor: '#B69349' }}
-                >
-                  {t('common.search') || 'بحث'}
-                </button>
-              </form>
-              <button
-                onClick={() => setIsSearchOpen(false)}
-                className="absolute top-3 right-6 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
-                style={{ color: '#666' }}
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Mobile Menu — Slide-in Drawer */}
         {isMenuOpen && (
-          <>
-            {/* Backdrop */}
-            <div
-              className="fixed inset-0 bg-black/25 z-40 md:hidden animate-fadeIn"
-              onClick={() => setIsMenuOpen(false)}
-            />
-            {/* Drawer */}
-            <div
-              className="fixed top-0 right-0 h-full w-80 z-50 md:hidden overflow-y-auto shadow-2xl"
-              style={{
-                backgroundColor: '#FFFFFF',
-                animation: 'slideInRight 0.3s ease-out',
-              }}
-            >
-              <style>{`@keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }`}</style>
-
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between px-6 py-5" style={{ borderBottom: '1px solid #eee' }}>
-                <span className="font-heading text-lg font-bold tracking-wider" style={{ color: '#333' }}>
-                  {settings.company.name || "PARDAH"}
-                </span>
-                <button
-                  onClick={() => setIsMenuOpen(false)}
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
-                  style={{ color: '#666' }}
-                >
-                  ✕
-                </button>
-              </div>
-
-              {/* Search */}
-              <div className="px-6 py-4">
-                <form onSubmit={handleSearch}>
-                  <input
-                    type="text"
-                    placeholder={t('common.search_placeholder') || 'البحث عن الذهب والمجوهرات...'}
-                    className="w-full px-4 py-2.5 rounded-lg text-sm focus:outline-none"
-                    style={{
-                      backgroundColor: '#F9F9F5',
-                      border: '1px solid #E5E5E0',
-                      color: '#333',
-                    }}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </form>
-              </div>
-
-              {/* Nav Links */}
-              <nav className="px-6 py-2">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.key}
-                    href={link.path}
-                    className="flex items-center py-3 text-[14px] font-medium transition-colors hover:text-[#B69349]"
-                    style={{ color: '#333', borderBottom: '1px solid #f0f0f0' }}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
+          <div className={`md:hidden bg-white border-t border-gray-100 absolute w-full ${isRTL ? 'right-0' : 'left-0'} top-full shadow-lg`}>
+            <div className="p-4 space-y-4">
+              <nav className="flex flex-col space-y-3">
+                {[
+                  { name: t('nav.home'), key: 'home', path: '/', show: true },
+                  { name: t('nav.shop'), key: 'shop', path: '/shop', show: true },
+                  { name: t('nav.categories'), key: 'categories', path: '/categories', show: true },
+                  { name: t('common.brands'), key: 'brands', path: '/brands', show: true },
+                  { name: t('nav.about'), key: 'about', path: '/about', show: settings?.pages?.aboutUs },
+                  { name: t('nav.contact'), key: 'contact', path: '/contact', show: settings?.pages?.contactUs },
+                ].filter(link => link.show !== false).map((link) => (
+                  <Link key={link.key} href={link.path} className="text-gray-700 hover:text-black font-medium py-1" onClick={() => setIsMenuOpen(false)}>{link.name}</Link>
                 ))}
               </nav>
-
-              {/* Language */}
-              <div className="px-6 py-4" style={{ borderTop: '1px solid #f0f0f0' }}>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium" style={{ color: '#666' }}>{t('common.language') || 'اللغة'}</span>
-                  <LanguageSwitcher />
-                </div>
-              </div>
-
-              {/* Live Chat */}
-              {settings?.features?.liveChat !== false && (
-                <div className="px-6 py-4">
-                  <button
-                    type="button"
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold text-white transition-all duration-300 hover:shadow-md"
-                    style={{ backgroundColor: '#B69349' }}
-                    onClick={() => {
-                      if (typeof window !== 'undefined') {
-                        window.dispatchEvent(new CustomEvent('open-live-chat'));
-                      }
-                      setIsMenuOpen(false);
-                    }}
-                  >
-                    💬 {t('common.live_chat') || 'المحادثة المباشرة'}
-                  </button>
-                </div>
-              )}
             </div>
-          </>
+          </div>
         )}
       </header>
     </>

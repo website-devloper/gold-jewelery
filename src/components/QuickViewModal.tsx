@@ -100,16 +100,16 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
   const getStockStatus = () => {
     if (product.variants && product.variants.length > 0) {
       if (selectedVariant) {
-        if (selectedVariant.stock > 10) return { status: 'in_stock', text: t('product.in_stock') || 'متوفر', color: 'text-green-600' };
-        if (selectedVariant.stock > 0) return { status: 'low_stock', text: t('product.low_stock') || 'كمية قليلة', color: 'text-yellow-600' };
-        return { status: 'out_of_stock', text: t('product.out_of_stock') || 'نفذت الكمية', color: 'text-red-600' };
+        if (selectedVariant.stock > 10) return { status: 'in_stock', text: t('product.in_stock') || 'In Stock', color: 'text-green-600' };
+        if (selectedVariant.stock > 0) return { status: 'low_stock', text: t('product.low_stock') || 'Low Stock', color: 'text-yellow-600' };
+        return { status: 'out_of_stock', text: t('product.out_of_stock') || 'Out of Stock', color: 'text-red-600' };
       }
       const totalStock = product.variants.reduce((sum, v) => sum + v.stock, 0);
-      if (totalStock > 10) return { status: 'in_stock', text: t('product.in_stock') || 'متوفر', color: 'text-green-600' };
-      if (totalStock > 0) return { status: 'low_stock', text: t('product.low_stock') || 'كمية قليلة', color: 'text-yellow-600' };
-      return { status: 'out_of_stock', text: t('product.out_of_stock') || 'نفذت الكمية', color: 'text-red-600' };
+      if (totalStock > 10) return { status: 'in_stock', text: t('product.in_stock') || 'In Stock', color: 'text-green-600' };
+      if (totalStock > 0) return { status: 'low_stock', text: t('product.low_stock') || 'Low Stock', color: 'text-yellow-600' };
+      return { status: 'out_of_stock', text: t('product.out_of_stock') || 'Out of Stock', color: 'text-red-600' };
     }
-    return { status: 'in_stock', text: t('product.in_stock') || 'متوفر', color: 'text-green-600' };
+    return { status: 'in_stock', text: t('product.in_stock') || 'In Stock', color: 'text-green-600' };
   };
 
   const stockInfo = getStockStatus();
@@ -118,7 +118,7 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
   const handleAddToCart = () => {
     if (isOutOfStock) return;
     addToCart(product, quantity, selectedVariant);
-    setCartDialogMessage(t('cart.added_to_cart') || 'تم الإضافة للسلة');
+    setCartDialogMessage(t('cart.added_to_cart') || 'Added to cart');
     setShowCartDialog(true);
     onClose();
   };
@@ -220,7 +220,7 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
                   {hasColorVariants && (
                     <div className="mb-4">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        {t('product.color') || 'اللون'}
+                        {t('product.color') || 'Color'}
                       </label>
                       <div className="flex flex-wrap gap-2">
                         {colorVariants.map((variant) => {
@@ -246,7 +246,7 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
                   {hasSizeVariants && (
                     <div className="mb-4">
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        {t('product.size') || 'المقاس'}
+                        {t('product.size') || 'Size'}
                       </label>
                       <div className="flex flex-wrap gap-2">
                         {sizeVariants.map((variant) => (
@@ -269,7 +269,7 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
                   {/* Quantity */}
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('product.quantity') || 'الكمية'}
+                      {t('product.quantity') || 'Quantity'}
                     </label>
                     <div className="flex items-center gap-3">
                       <button
@@ -296,7 +296,7 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
                     disabled={isOutOfStock}
                     className="flex-1 bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {t('product.add_to_cart') || 'إضافة للسلة'}
+                    {t('product.add_to_cart') || 'Add to Cart'}
                   </button>
                   <button
                     onClick={handleToggleWishlist}
@@ -315,7 +315,7 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
                   href={`/products/${product.slug}`}
                   className="mt-3 text-center text-sm font-medium text-gray-900 border-b border-gray-900 pb-1 hover:opacity-70 transition-opacity"
                 >
-                  {t('product.view_full_details') || 'عرض التفاصيل الكاملة'} →
+                  {t('product.view_full_details') || 'View Full Details'} →
                 </Link>
               </div>
             </div>
@@ -327,4 +327,3 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, isOpen, onClos
 };
 
 export default QuickViewModal;
-

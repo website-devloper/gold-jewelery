@@ -51,3 +51,6 @@ lint_output.txt
 next-env.d.ts
 
 .vercel
+
+.vercel
+.env*.local

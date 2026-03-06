@@ -41,7 +41,7 @@ const nextConfig: NextConfig = {
   },
   // Caching strategy
   experimental: {
-    optimizeCss: true,
+    optimizeCss: false,
   },
 };
 

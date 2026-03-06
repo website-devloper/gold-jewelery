@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import localFont from "next/font/local";
+import { Inter, Poppins, Geist_Mono, Roboto, Open_Sans, Montserrat } from "next/font/google";
 import "./globals.css";
 import { getSettings } from '@/lib/firestore/settings_db';
 import { getSEOSettings, getPageSEO } from '@/lib/firestore/seo_db';
@@ -13,16 +13,42 @@ import { ThemeProvider } from '../components/ThemeProvider';
 import LayoutWrapper from '../components/LayoutWrapper';
 import { ToastProvider } from '../components/Toast';
 
-// Arabic Heading Font - Bader Goldstar (elegant Arabic calligraphy for hero & headings)
-const baderGoldstar = localFont({
-  src: [
-    {
-      path: "../../public/fonts/ArbFONTS-bader_goldstar.ttf",
-      weight: "400",
-      style: "normal",
-    }
-  ],
-  variable: "--font-bader-goldstar",
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  display: "swap",
+});
+
+const openSans = Open_Sans({
+  variable: "--font-open-sans",
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -31,24 +57,21 @@ export async function generateMetadata(): Promise<Metadata> {
     const [settings, seoSettings, homepageSEO] = await Promise.all([
       getSettings(),
       getSEOSettings(),
-      getPageSEO('/'), // Check for homepage-specific SEO
+      getPageSEO('/'),
     ]);
 
-    // Use SEO settings from seo_settings collection if available, otherwise use settings.seo
     const globalSEO = seoSettings || settings?.seo;
     const companyName = settings?.company?.name || 'Pardah';
 
-    // Priority: Homepage Page SEO > Global SEO > Fallback
     const metadata = generateSEOMetadata({
       globalSEO,
-      pageSEO: homepageSEO, // Homepage-specific SEO
+      pageSEO: homepageSEO,
       fallbackTitle: globalSEO?.siteTitle || companyName || '',
       fallbackDescription: globalSEO?.siteDescription || '',
       fallbackImage: globalSEO?.defaultMetaImage || globalSEO?.ogDefaultImage,
       url: '/',
     });
 
-    // Add favicon and PWA icons if available
     const pwaMetadata = {
       manifest: '/manifest.json',
       appleWebApp: {
@@ -75,8 +98,6 @@ export async function generateMetadata(): Promise<Metadata> {
       ...pwaMetadata,
     };
   } catch {
-    // Error generating metadata
-    // Fallback metadata
     try {
       const settings = await getSettings();
       const companyName = settings?.company?.name || 'Pardah';
@@ -97,7 +118,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export function generateViewport(): Viewport {
   return {
-    themeColor: '#CFB257',
+    themeColor: '#000000',
   };
 }
 
@@ -107,9 +128,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" suppressHydrationWarning dir="rtl">
+    <html lang="en" suppressHydrationWarning dir="ltr">
       <body
-        className={`${baderGoldstar.variable} antialiased`}
+        className={`${inter.variable} ${poppins.variable} ${geistMono.variable} ${roboto.variable} ${openSans.variable} ${montserrat.variable} antialiased`}
       >
         <AuthProvider>
           <LanguageProvider>

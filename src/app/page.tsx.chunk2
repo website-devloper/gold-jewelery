@@ -1,0 +1,131 @@
+  useEffect(() => {
+    const allSections = document.querySelectorAll('[data-section-id]');
+    const allSectionIds = Array.from(allSections).map(section => section.getAttribute('data-section-id')).filter(Boolean) as string[];
+    setVisibleSections(new Set(allSectionIds));
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '-50px 0px',
+      threshold: 0.01,
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.getAttribute('data-section-id');
+          if (sectionId) {
+            setVisibleSections((prev) => new Set(prev).add(sectionId));
+          }
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    setTimeout(() => {
+      const sections = document.querySelectorAll('[data-section-id]');
+      sections.forEach((section) => observer.observe(section));
+    }, 100);
+
+    return () => {
+      const sections = document.querySelectorAll('[data-section-id]');
+      sections.forEach((section) => observer.unobserve(section));
+    };
+  }, [loading]);
+
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentBannerIndex((prev) => (prev === banners.length - 1 ? 0 : prev + 1));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [banners.length]);
+
+  useEffect(() => {
+    getColors().then(setColors).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [fetchedBanners, fetchedProducts, fetchedCategories, flashSales, fetchedCollections, fetchedBundles] = await Promise.all([
+          getAllBanners(),
+          getAllProducts(),
+          getAllCategories(),
+          getAllFlashSales(true),
+          getAllCollections(),
+          settings?.features?.productBundles ? getAllProductBundles(true) : Promise.resolve([])
+        ]);
+        
+        const sortedBanners = fetchedBanners
+          .filter(b => {
+            if (!b.isActive) return false;
+            if (b.deviceType === 'both') return true;
+            if (isMobile && b.deviceType === 'mobile') return true;
+            if (!isMobile && b.deviceType === 'desktop') return true;
+            return false;
+          })
+          .sort((a, b) => (a.order || 0) - (b.order || 0));
+        setBanners(sortedBanners);
+
+        const activeProducts = fetchedProducts
+          .filter(p => p.isActive)
+          .map(p => ({
+            ...p,
+            slug: p.slug || generateSlug(p.name || `product-${p.id}`)
+          }));
+        
+        setFeaturedProducts(activeProducts.filter(p => p.isFeatured).slice(0, 8));
+        
+        const popular = [...activeProducts].sort((a, b) => {
+          const aViews = a.analytics?.views || 0;
+          const bViews = b.analytics?.views || 0;
+          const aPurchases = a.analytics?.purchases || 0;
+          const bPurchases = b.analytics?.purchases || 0;
+          if (bViews !== aViews) return bViews - aViews;
+          return bPurchases - aPurchases;
+        }).slice(0, 8);
+        setPopularProducts(popular);
+        
+        const latest = [...activeProducts].sort((a, b) => {
+          const aDate = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+          const bDate = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+          return bDate - aDate;
+        }).slice(0, 8);
+        setLatestProducts(latest);
+
+        setCategories(fetchedCategories.filter(c => !c.parentCategory));
+        setCollections(fetchedCollections.filter(c => !c.parentCollection));
+
+        const now = new Date();
+        const validFlashSales = flashSales.filter(sale => {
+          if (!sale.isActive) return false;
+          const startTime = sale.startTime?.toDate ? sale.startTime.toDate() : new Date(0);
+          const endTime = sale.endTime?.toDate ? sale.endTime.toDate() : new Date(0);
+          return now >= startTime && now <= endTime;
+        });
+        setActiveFlashSales(validFlashSales);
+        
+        if (validFlashSales.length > 0) {
+          const flashSaleProductIds = new Set<string>();
+          validFlashSales.forEach(sale => sale.productIds.forEach(id => flashSaleProductIds.add(id)));
+          setFlashSaleProducts(activeProducts.filter(p => flashSaleProductIds.has(p.id)).slice(0, 8));
+        }
+
+        if (settings?.features?.productBundles && fetchedBundles && fetchedBundles.length > 0) {
+          const validBundles = fetchedBundles.filter((bundle: ProductBundle) => {
+            if (!bundle.isActive) return false;
+            if (bundle.validFrom && bundle.validFrom.toDate && bundle.validFrom.toDate() > now) return false;
+            if (bundle.validUntil && bundle.validUntil.toDate && bundle.validUntil.toDate() < now) return false;
+            return true;
+          });
+          setActiveBundles(validBundles.slice(0, 6));
+        }
+      } catch {
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [isMobile]);
+
+  /* CHUNK_MARKER_EFFECTS */

@@ -1,0 +1,83 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import Image from "next/image";
+import Link from 'next/link';
+import { getAllBanners } from '@/lib/firestore/banners_db';
+import { Banner } from '@/lib/firestore/banners';
+import { getAllProducts } from '@/lib/firestore/products_db';
+import { getAllCategories } from '@/lib/firestore/categories_db';
+import { getAllCollections } from '@/lib/firestore/collections_db';
+import { Product } from '@/lib/firestore/products';
+import { Category } from '@/lib/firestore/categories';
+import { Collection } from '@/lib/firestore/collections';
+import { generateSlug } from '@/lib/utils/slug';
+import { useLanguage } from '../context/LanguageContext';
+import { getProductName, getCategoryName, getCollectionName } from '@/lib/utils/translations';
+import { useCurrency } from '../context/CurrencyContext';
+import { useSettings } from '../context/SettingsContext';
+import { getAllFlashSales } from '@/lib/firestore/campaigns_db';
+import { FlashSale } from '@/lib/firestore/campaigns';
+import { getAllProductBundles } from '@/lib/firestore/product_bundles_db';
+import { ProductBundle } from '@/lib/firestore/product_bundles';
+import { getReviewsByProductId, getAllReviews } from '@/lib/firestore/reviews_enhanced_db';
+import type { Review } from '@/lib/firestore/reviews_enhanced';
+import { useCart } from '../context/CartContext';
+import QuickViewModal from '../components/QuickViewModal';
+import { getColors } from '@/lib/firestore/attributes_db';
+import { Color } from '@/lib/firestore/attributes';
+import { getColorName } from '@/lib/utils/translations';
+import CountdownTimer from '../components/CountdownTimer';
+import { getAllPosts } from '@/lib/firestore/blog_db';
+import { BlogPost } from '@/lib/firestore/blog';
+import { addNewsletterSubscription } from '@/lib/firestore/newsletter_db';
+import SkeletonLoader from '../components/SkeletonLoader';
+import MobileStickyCart from '../components/MobileStickyCart';
+import BackToTop from '../components/BackToTop';
+import ProductComparison from '../components/ProductComparison';
+import { getRecentlyViewed } from '@/lib/firestore/product_features_db';
+import { useAuth } from '../context/AuthContext';
+import { getPageBySlug } from '@/lib/firestore/pages_db';
+
+export default function Home() {
+  const { t, currentLanguage } = useLanguage();
+  const { formatPrice } = useCurrency();
+  const { settings } = useSettings();
+  const languageCode = currentLanguage?.code || 'en';
+  const [banners, setBanners] = useState<Banner[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [popularProducts, setPopularProducts] = useState<Product[]>([]);
+  const [latestProducts, setLatestProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeFlashSales, setActiveFlashSales] = useState<FlashSale[]>([]);
+  const [flashSaleProducts, setFlashSaleProducts] = useState<Product[]>([]);
+  const [collections, setCollections] = useState<Collection[]>([]);
+  const [activeBundles, setActiveBundles] = useState<ProductBundle[]>([]);
+  const [reviewStats, setReviewStats] = useState<Record<string, { averageRating: number; reviewCount: number }>>({});
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+  const [colors, setColors] = useState<Color[]>([]);
+  const [testimonials, setTestimonials] = useState<Review[]>([]);
+  const [featuredBlogPosts, setFeaturedBlogPosts] = useState<BlogPost[]>([]);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterLoading, setNewsletterLoading] = useState(false);
+  const [newsletterSuccess, setNewsletterSuccess] = useState(false);
+  const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
+  const [, setVisibleSections] = useState<Set<string>>(new Set(['hero']));
+  const [recentlyViewedProducts, setRecentlyViewedProducts] = useState<Product[]>([]);
+  const [comparisonProducts, setComparisonProducts] = useState<Product[]>([]);
+  const { user, demoUser } = useAuth();
+  const { addToCart, setShowCartDialog, setCartDialogMessage } = useCart();
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  /* CHUNK_MARKER_INITIAL_LOGIC */
+  return null; // Partial file - to be expanded
+}
