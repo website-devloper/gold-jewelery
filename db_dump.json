@@ -1,0 +1,241 @@
+﻿{
+    "categories":  [
+                       {
+                           "id":  "cat_women_accessories",
+                           "name":  "Accessories",
+                           "translations":  [
+
+                                            ]
+                       },
+                       {
+                           "id":  "cat_women_bottoms",
+                           "name":  "Bottoms",
+                           "translations":  [
+
+                                            ]
+                       },
+                       {
+                           "id":  "cat_women_dresses",
+                           "name":  "Dresses",
+                           "translations":  [
+
+                                            ]
+                       },
+                       {
+                           "id":  "cat_women_shoes",
+                           "name":  "Shoes",
+                           "translations":  [
+
+                                            ]
+                       },
+                       {
+                           "id":  "cat_women_tops",
+                           "name":  "Tops \u0026 Blouses",
+                           "translations":  [
+
+                                            ]
+                       }
+                   ],
+    "products":  [
+                     {
+                         "id":  "prod_bodycon_dress",
+                         "name":  "Bodycon Party Dress",
+                         "description":  "Stylish bodycon dress perfect for parties and even...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_cardigan",
+                         "name":  "Cozy Cardigan",
+                         "description":  "Warm and comfortable cardigan perfect for layering...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_cargo_pants",
+                         "name":  "Cargo Pants",
+                         "description":  "Stylish cargo pants with multiple pockets. Perfect...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_casual_t_shirt",
+                         "name":  "Classic Cotton T-Shirt",
+                         "description":  "Comfortable and versatile cotton t-shirt. Perfect ...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_denim_jacket",
+                         "name":  "Classic Denim Jacket",
+                         "description":  "Timeless denim jacket with classic fit. Perfect fo...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_designer_handbag",
+                         "name":  "Designer Leather Handbag",
+                         "description":  "Premium quality leather handbag with elegant desig...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_flat_sandals",
+                         "name":  "Comfortable Flat Sandals",
+                         "description":  "Comfortable flat sandals perfect for summer. Made ...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_floral_maxi_dress",
+                         "name":  "Floral Print Maxi Dress",
+                         "description":  "Beautiful floral print maxi dress with long sleeve...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_heels",
+                         "name":  "Classic High Heels",
+                         "description":  "Elegant high heels perfect for special occasions. ...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_high_waist_jeans",
+                         "name":  "High Waist Skinny Jeans",
+                         "description":  "Comfortable high waist skinny jeans with stretch. ...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_leather_ankle_boots",
+                         "name":  "Leather Ankle Boots",
+                         "description":  "Stylish leather ankle boots with comfortable heel....",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_loafers",
+                         "name":  "Classic Loafers",
+                         "description":  "Comfortable and stylish loafers. Perfect for offic...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_midi_dress",
+                         "name":  "Elegant Midi Dress",
+                         "description":  "Classic midi dress with flattering silhouette. Per...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_necklace",
+                         "name":  "Gold Necklace",
+                         "description":  "Elegant gold necklace with pendant. Perfect access...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_pleated_skirt",
+                         "name":  "Pleated Midi Skirt",
+                         "description":  "Elegant pleated midi skirt. Perfect for office or ...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_scarf",
+                         "name":  "Silk Scarf",
+                         "description":  "Luxurious silk scarf with beautiful patterns. Perf...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_shirt_dress",
+                         "name":  "Classic Shirt Dress",
+                         "description":  "Versatile shirt dress perfect for office or casual...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_shorts",
+                         "name":  "High Waist Shorts",
+                         "description":  "Comfortable high waist shorts perfect for summer. ...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_silk_blouse",
+                         "name":  "Elegant Silk Blouse",
+                         "description":  "Luxurious silk blouse with elegant details. Perfec...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_sneakers",
+                         "name":  "Classic White Sneakers",
+                         "description":  "Comfortable and stylish white sneakers. Perfect fo...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_sunglasses",
+                         "name":  "Designer Sunglasses",
+                         "description":  "Stylish designer sunglasses with UV protection. Pe...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_tank_top",
+                         "name":  "Basic Tank Top",
+                         "description":  "Comfortable and versatile tank top. Perfect for la...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_watch",
+                         "name":  "Elegant Watch",
+                         "description":  "Stylish watch with leather strap. Perfect accessor...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_wide_leg_pants",
+                         "name":  "Wide Leg Trousers",
+                         "description":  "Comfortable wide leg trousers with high waist. Per...",
+                         "translations":  [
+
+                                          ]
+                     },
+                     {
+                         "id":  "prod_wrap_dress",
+                         "name":  "Floral Wrap Dress",
+                         "description":  "Beautiful wrap dress with floral print. Flattering...",
+                         "translations":  [
+
+                                          ]
+                     }
+                 ]
+}
